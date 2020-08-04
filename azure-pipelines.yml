@@ -39,7 +39,7 @@ stages:
       displayName: Terraform Apply
       inputs:
         command: 'apply'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/orchestrate/nginx'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/orchestrate/nginx'
         environmentServiceName: 'CloudEng-NonProd(9166f63a-fcb8-40b6-8b20-aa1803f52fe9)'
         commandOptions: '-var subscriptionID=$(AZURE_SUBSCRIPTION_ID)'
 
@@ -78,6 +78,6 @@ stages:
       displayName: Terraform Destroy
       inputs:
         command: 'destroy'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/orchestrate/nginx'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/orchestrate/nginx'
         environmentServiceName: 'CloudEng-NonProd(9166f63a-fcb8-40b6-8b20-aa1803f52fe9)'
         commandOptions: '-var subscriptionID=$(AZURE_SUBSCRIPTION_ID)'
