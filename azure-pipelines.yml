@@ -2,12 +2,11 @@
 pool:
   vmImage: 'vs2017-win2016'
 
-
 variables:
-- group: TerraformSPN
+- group: CloudEng-NonProd
 
 steps:
-- script: echo Deploy NGINX
+- script: echo Create Azure Policies
   displayName: 'Starting Job'
 
 - task: ms-devlabs.custom-terraform-tasks.custom-terraform-installer-task.TerraformInstaller@0
@@ -15,29 +14,27 @@ steps:
     terraformVersion: 'v0.12.18'
 
 - task: TerraformCLI@0
-  displayName: Terraform Initialization
   inputs:
     command: 'init'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/orchestrate/nginx'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/orchestrate/rightSize'
     backendType: 'azurerm'
-    backendServiceArm: 'AzureConnection'
+    backendServiceArm: 'CloudEng-NonProd(9166f63a-fcb8-40b6-8b20-aa1803f52fe9)'
     backendAzureRmResourceGroupName: 'terraformbackend'
-    backendAzureRmStorageAccountName: 'azurebackendterrstracc'
-    backendAzureRmContainerName: 'backendcontainer'
-    backendAzureRmKey: 'nginxdev.tfstate'
+    backendAzureRmStorageAccountName: 'aewwterraformbackend'
+    backendAzureRmContainerName: 'states'
+    backendAzureRmKey: 'rightsku.tfstate'
 
 - task: TerraformCLI@0
-  displayName: Terraform Plan
   inputs:
     command: 'plan'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/orchestrate/nginx'
-    environmentServiceName: 'AzureConnection'
-    commandOptions: '-var-file ../globalvars.tfvars'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/orchestrate/rightSize'
+    environmentServiceName: 'CloudEng-NonProd(9166f63a-fcb8-40b6-8b20-aa1803f52fe9)'
+    commandOptions: '-var subscriptionID= var.AZURE_SUBSCRIPTION_ID'
 
-- task: TerraformCLI@0
-  displayName: Terraform Apply
-  inputs:
-    command: 'apply'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/orchestrate/nginx'
-    environmentServiceName: 'AzureConnection'
-    commandOptions: '-var-file ../globalvars.tfvars'
+# - task: TerraformCLI@0
+#   displayName: Terraform Apply
+#   inputs:
+#     command: 'apply'
+#     workingDirectory: '$(System.DefaultWorkingDirectory)/orchestrate/nginx'
+#     environmentServiceName: 'AzureConnection'
+#     commandOptions: '-var-file ../globalvars.tfvars'
