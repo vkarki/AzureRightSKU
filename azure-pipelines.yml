@@ -5,36 +5,87 @@ pool:
 variables:
 - group: CloudEng-NonProd
 
-steps:
-- script: echo Create Azure Policies
-  displayName: 'Starting Job'
+stages:
+- stage: Create_Policy
+  jobs:
+  - job: Install_Terraform 
+    steps:
+    - task: ms-devlabs.custom-terraform-tasks.custom-terraform-installer-task.TerraformInstaller@0
+      displayName: 'Install Terraform'
+      inputs:
+        terraformVersion: 'v0.12.18'
 
-- task: ms-devlabs.custom-terraform-tasks.custom-terraform-installer-task.TerraformInstaller@0
-  inputs:
-    terraformVersion: 'v0.12.18'
+  - job: Terraform_Initalize
+    steps: 
+    - task: TerraformCLI@0
+      displayName: 'Initialize'
+      inputs:
+        command: 'init'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/orchestrate/rightSize'
+        backendType: 'azurerm'
+        backendServiceArm: 'CloudEng-NonProd(9166f63a-fcb8-40b6-8b20-aa1803f52fe9)'
+        backendAzureRmResourceGroupName: 'terraformbackend'
+        backendAzureRmStorageAccountName: 'aewwterraformbackend'
+        backendAzureRmContainerName: 'states'
+        backendAzureRmKey: 'rightsku.tfstate'
 
-- task: TerraformCLI@0
-  inputs:
-    command: 'init'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/orchestrate/rightSize'
-    backendType: 'azurerm'
-    backendServiceArm: 'CloudEng-NonProd(9166f63a-fcb8-40b6-8b20-aa1803f52fe9)'
-    backendAzureRmResourceGroupName: 'terraformbackend'
-    backendAzureRmStorageAccountName: 'aewwterraformbackend'
-    backendAzureRmContainerName: 'states'
-    backendAzureRmKey: 'rightsku.tfstate'
+  - job: Terraform_Plan
+    steps:
+    - task: TerraformCLI@0
+      inputs:
+        command: 'plan'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/orchestrate/rightSize'
+        environmentServiceName: 'CloudEng-NonProd(9166f63a-fcb8-40b6-8b20-aa1803f52fe9)'
+        commandOptions: '-var subscriptionID=$(AZURE_SUBSCRIPTION_ID)'
 
-- task: TerraformCLI@0
-  inputs:
-    command: 'plan'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/orchestrate/rightSize'
-    environmentServiceName: 'CloudEng-NonProd(9166f63a-fcb8-40b6-8b20-aa1803f52fe9)'
-    commandOptions: '-var subscriptionID=$(AZURE_SUBSCRIPTION_ID)'
+  - job: Terraform_Apply
+    steps:
+    - task: TerraformCLI@0
+      displayName: Terraform Apply
+      inputs:
+        command: 'apply'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/orchestrate/nginx'
+        environmentServiceName: 'AzureConnection'
+        commandOptions: '-var subscriptionID=$(AZURE_SUBSCRIPTION_ID)'
 
-# - task: TerraformCLI@0
-#   displayName: Terraform Apply
-#   inputs:
-#     command: 'apply'
-#     workingDirectory: '$(System.DefaultWorkingDirectory)/orchestrate/nginx'
-#     environmentServiceName: 'AzureConnection'
-#     commandOptions: '-var-file ../globalvars.tfvars'
+- stage: Delete_Policy
+  jobs:
+  - job: Install_Terraform 
+    steps:
+    - task: ms-devlabs.custom-terraform-tasks.custom-terraform-installer-task.TerraformInstaller@0
+      displayName: 'Install Terraform'
+      inputs:
+        terraformVersion: 'v0.12.18'
+
+  - job: Terraform_Initalize
+    steps: 
+    - task: TerraformCLI@0
+      displayName: 'Initialize'
+      inputs:
+        command: 'init'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/orchestrate/rightSize'
+        backendType: 'azurerm'
+        backendServiceArm: 'CloudEng-NonProd(9166f63a-fcb8-40b6-8b20-aa1803f52fe9)'
+        backendAzureRmResourceGroupName: 'terraformbackend'
+        backendAzureRmStorageAccountName: 'aewwterraformbackend'
+        backendAzureRmContainerName: 'states'
+        backendAzureRmKey: 'rightsku.tfstate'
+
+  - job: Terraform_Plan
+    steps:
+    - task: TerraformCLI@0
+      inputs:
+        command: 'plan'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/orchestrate/rightSize'
+        environmentServiceName: 'CloudEng-NonProd(9166f63a-fcb8-40b6-8b20-aa1803f52fe9)'
+        commandOptions: '-var subscriptionID=$(AZURE_SUBSCRIPTION_ID)'
+
+  - job: Terraform_Destroy
+    steps:
+    - task: TerraformCLI@0
+      displayName: Terraform Destroy
+      inputs:
+        command: 'destroy'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/orchestrate/nginx'
+        environmentServiceName: 'AzureConnection'
+        commandOptions: '-var subscriptionID=$(AZURE_SUBSCRIPTION_ID)'
