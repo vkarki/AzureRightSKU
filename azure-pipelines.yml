@@ -49,6 +49,7 @@ stages:
         commandOptions: '-var subscriptionID=$(AZURE_SUBSCRIPTION_ID)'
 
 - stage: Delete_Policy
+  dependsOn: []
   jobs:
   - job: Install_Terraform 
     steps:
