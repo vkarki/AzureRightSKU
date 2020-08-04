@@ -29,7 +29,7 @@ steps:
     command: 'plan'
     workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/orchestrate/rightSize'
     environmentServiceName: 'CloudEng-NonProd(9166f63a-fcb8-40b6-8b20-aa1803f52fe9)'
-    commandOptions: '-var subscriptionID= var.AZURE_SUBSCRIPTION_ID'
+    commandOptions: '-var subscriptionID=$(AZURE_SUBSCRIPTION_ID)'
 
 # - task: TerraformCLI@0
 #   displayName: Terraform Apply
