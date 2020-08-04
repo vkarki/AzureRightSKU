@@ -1,19 +1,43 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
-trigger:
-- master
-
+  
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: 'vs2017-win2016'
+
+
+variables:
+- group: TerraformSPN
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+- script: echo Deploy NGINX
+  displayName: 'Starting Job'
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+- task: ms-devlabs.custom-terraform-tasks.custom-terraform-installer-task.TerraformInstaller@0
+  inputs:
+    terraformVersion: 'v0.12.18'
+
+- task: TerraformCLI@0
+  displayName: Terraform Initialization
+  inputs:
+    command: 'init'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/orchestrate/nginx'
+    backendType: 'azurerm'
+    backendServiceArm: 'AzureConnection'
+    backendAzureRmResourceGroupName: 'terraformbackend'
+    backendAzureRmStorageAccountName: 'azurebackendterrstracc'
+    backendAzureRmContainerName: 'backendcontainer'
+    backendAzureRmKey: 'nginxdev.tfstate'
+
+- task: TerraformCLI@0
+  displayName: Terraform Plan
+  inputs:
+    command: 'plan'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/orchestrate/nginx'
+    environmentServiceName: 'AzureConnection'
+    commandOptions: '-var-file ../globalvars.tfvars'
+
+- task: TerraformCLI@0
+  displayName: Terraform Apply
+  inputs:
+    command: 'apply'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/orchestrate/nginx'
+    environmentServiceName: 'AzureConnection'
+    commandOptions: '-var-file ../globalvars.tfvars'
