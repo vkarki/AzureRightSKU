@@ -1,0 +1,5 @@
+variable "azurergName" {
+}
+
+variable "location" {
+}
