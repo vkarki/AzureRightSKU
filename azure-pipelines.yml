@@ -45,7 +45,7 @@ stages:
       inputs:
         command: 'apply'
         workingDirectory: '$(System.DefaultWorkingDirectory)/orchestrate/nginx'
-        environmentServiceName: 'AzureConnection'
+        environmentServiceName: 'CloudEng-NonProd(9166f63a-fcb8-40b6-8b20-aa1803f52fe9)'
         commandOptions: '-var subscriptionID=$(AZURE_SUBSCRIPTION_ID)'
 
 - stage: Delete_Policy
@@ -87,5 +87,5 @@ stages:
       inputs:
         command: 'destroy'
         workingDirectory: '$(System.DefaultWorkingDirectory)/orchestrate/nginx'
-        environmentServiceName: 'AzureConnection'
+        environmentServiceName: 'CloudEng-NonProd(9166f63a-fcb8-40b6-8b20-aa1803f52fe9)'
         commandOptions: '-var subscriptionID=$(AZURE_SUBSCRIPTION_ID)'
