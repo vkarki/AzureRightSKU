@@ -15,8 +15,6 @@ stages:
       inputs:
         terraformVersion: 'v0.12.18'
 
-  - job: Terraform_Initalize
-    steps: 
     - task: TerraformCLI@0
       displayName: 'Initialize'
       inputs:
@@ -29,17 +27,14 @@ stages:
         backendAzureRmContainerName: 'states'
         backendAzureRmKey: 'rightsku.tfstate'
 
-  - job: Terraform_Plan
-    steps:
     - task: TerraformCLI@0
+      displayName: Terraform Plan
       inputs:
         command: 'plan'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/orchestrate/rightSize'
         environmentServiceName: 'CloudEng-NonProd(9166f63a-fcb8-40b6-8b20-aa1803f52fe9)'
         commandOptions: '-var subscriptionID=$(AZURE_SUBSCRIPTION_ID)'
 
-  - job: Terraform_Apply
-    steps:
     - task: TerraformCLI@0
       displayName: Terraform Apply
       inputs:
@@ -47,6 +42,7 @@ stages:
         workingDirectory: '$(System.DefaultWorkingDirectory)/orchestrate/nginx'
         environmentServiceName: 'CloudEng-NonProd(9166f63a-fcb8-40b6-8b20-aa1803f52fe9)'
         commandOptions: '-var subscriptionID=$(AZURE_SUBSCRIPTION_ID)'
+
 
 - stage: Delete_Policy
   dependsOn: []
@@ -58,8 +54,6 @@ stages:
       inputs:
         terraformVersion: 'v0.12.18'
 
-  - job: Terraform_Initalize
-    steps: 
     - task: TerraformCLI@0
       displayName: 'Initialize'
       inputs:
@@ -72,17 +66,14 @@ stages:
         backendAzureRmContainerName: 'states'
         backendAzureRmKey: 'rightsku.tfstate'
 
-  - job: Terraform_Plan
-    steps:
     - task: TerraformCLI@0
+      displayName: Terraform Plan
       inputs:
         command: 'plan'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/orchestrate/rightSize'
         environmentServiceName: 'CloudEng-NonProd(9166f63a-fcb8-40b6-8b20-aa1803f52fe9)'
         commandOptions: '-var subscriptionID=$(AZURE_SUBSCRIPTION_ID)'
 
-  - job: Terraform_Destroy
-    steps:
     - task: TerraformCLI@0
       displayName: Terraform Destroy
       inputs:
