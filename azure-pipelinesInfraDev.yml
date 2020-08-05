@@ -20,6 +20,7 @@ stages:
       inputs:
         command: 'init'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/orchestrate/rightSize'
+        commandOptions: '--backend-config=./backend/InfraDevTest.tfvars'
         backendType: 'azurerm'
         backendServiceArm: 'INFRADEVTEST'
         backendAzureRmResourceGroupName: 'terraformbackend'
@@ -59,6 +60,7 @@ stages:
       inputs:
         command: 'init'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/orchestrate/rightSize'
+        commandOptions: '--backend-config=./backend/InfraDevTest.tfvars'
         backendType: 'azurerm'
         backendServiceArm: 'INFRADEVTEST'
         backendAzureRmResourceGroupName: 'terraformbackend'
