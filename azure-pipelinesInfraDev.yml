@@ -3,7 +3,7 @@ pool:
   vmImage: 'vs2017-win2016'
 
 variables:
-- group: Subscription_ID
+- group: INFRADEVTEST
 
 stages:
 - stage: Create_Policy
@@ -33,7 +33,7 @@ stages:
         command: 'plan'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/orchestrate/rightSize'
         environmentServiceName: 'INFRADEVTEST'
-        commandOptions: '-var subscriptionID=$(INFRADEVTEST)'
+        commandOptions: '-var subscriptionID=$(AZURE_SUBSCRIPTION_ID)'
 
     - task: TerraformCLI@0
       displayName: Terraform Apply
@@ -41,7 +41,7 @@ stages:
         command: 'apply'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/orchestrate/rightSize'
         environmentServiceName: 'INFRADEVTEST'
-        commandOptions: '-var subscriptionID=$(INFRADEVTEST)'
+        commandOptions: '-var subscriptionID=$(AZURE_SUBSCRIPTION_ID)'
 
 
 - stage: Delete_Policy
@@ -72,7 +72,7 @@ stages:
         command: 'plan'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/orchestrate/rightSize'
         environmentServiceName: 'INFRADEVTEST'
-        commandOptions: '-var subscriptionID=$(INFRADEVTEST)'
+        commandOptions: '-var subscriptionID=$(AZURE_SUBSCRIPTION_ID)'
 
     - task: TerraformCLI@0
       displayName: Terraform Destroy
@@ -80,4 +80,4 @@ stages:
         command: 'destroy'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/orchestrate/rightSize'
         environmentServiceName: 'INFRADEVTEST'
-        commandOptions: '-var subscriptionID=$(INFRADEVTEST)'
+        commandOptions: '-var subscriptionID=$(AZURE_SUBSCRIPTION_ID)'
