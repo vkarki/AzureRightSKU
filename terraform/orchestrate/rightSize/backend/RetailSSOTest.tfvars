@@ -1,1 +1,6 @@
-
+subscription_id      = "c41b83b6-4c33-4153-8f66-85779dea7f6f"
+tenant_id            = "c28b2d80-129e-4693-88bd-5f43e59072f9"
+resource_group_name  = "terraformbackend"
+storage_account_name = "aewwtfbackendretailsso"
+container_name       = "states"
+key                  = "rightsku.tfstate"
