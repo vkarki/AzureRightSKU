@@ -60,7 +60,7 @@ stages:
       inputs:
         command: 'init'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/orchestrate/rightSize'
-        commandOptions: '--backend-config=./backend/InfraDevTest.tfvars'
+        commandOptions: '--backend-config=./backend/InnovationLab.tfvars'
         backendType: 'azurerm'
         backendServiceArm: 'InnovationLab'
         backendAzureRmResourceGroupName: 'terraformbackend'
