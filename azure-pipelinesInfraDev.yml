@@ -1,0 +1,84 @@
+pool:
+  vmImage: 'vs2017-win2016'
+
+variables:
+- group: INFRADEVTEST
+
+stages:
+- stage: Create_Policy
+  jobs:
+  - job: Install_Terraform 
+    steps:
+    - task: ms-devlabs.custom-terraform-tasks.custom-terraform-installer-task.TerraformInstaller@0
+      displayName: 'Install Terraform'
+      inputs:
+        terraformVersion: 'v0.12.18'
+
+    - task: TerraformCLI@0
+      displayName: 'Initialize'
+      inputs:
+        command: 'init'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/orchestrate/rightSize'
+        commandOptions: '--backend-config=./backend/InfraDevTest.tfvars'
+        backendType: 'azurerm'
+        backendServiceArm: 'INFRADEVTEST'
+        backendAzureRmResourceGroupName: 'terraformbackend'
+        backendAzureRmStorageAccountName: 'aewwtfbackendinfradev'
+        backendAzureRmContainerName: 'states'
+        backendAzureRmKey: 'rightsku.tfstate'
+
+    - task: TerraformCLI@0
+      displayName: Terraform Plan
+      inputs:
+        command: 'plan'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/orchestrate/rightSize'
+        environmentServiceName: 'INFRADEVTEST'
+        commandOptions: '-var subscriptionID=$(AZURE_SUBSCRIPTION_ID)'
+
+    - task: TerraformCLI@0
+      displayName: Terraform Apply
+      inputs:
+        command: 'apply'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/orchestrate/rightSize'
+        environmentServiceName: 'INFRADEVTEST'
+        commandOptions: '-var subscriptionID=$(AZURE_SUBSCRIPTION_ID)'
+
+
+- stage: Delete_Policy
+  dependsOn: []
+  jobs:
+  - job: Install_Terraform 
+    steps:
+    - task: ms-devlabs.custom-terraform-tasks.custom-terraform-installer-task.TerraformInstaller@0
+      displayName: 'Install Terraform'
+      inputs:
+        terraformVersion: 'v0.12.18'
+
+    - task: TerraformCLI@0
+      displayName: 'Initialize'
+      inputs:
+        command: 'init'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/orchestrate/rightSize'
+        commandOptions: '--backend-config=./backend/InfraDevTest.tfvars'
+        backendType: 'azurerm'
+        backendServiceArm: 'INFRADEVTEST'
+        backendAzureRmResourceGroupName: 'terraformbackend'
+        backendAzureRmStorageAccountName: 'aewwtfbackendinfradev'
+        backendAzureRmContainerName: 'states'
+        backendAzureRmKey: 'rightsku.tfstate'
+
+    - task: TerraformCLI@0
+      displayName: Terraform Plan
+      inputs:
+        command: 'plan'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/orchestrate/rightSize'
+        environmentServiceName: 'INFRADEVTEST'
+        commandOptions: '-var subscriptionID=$(AZURE_SUBSCRIPTION_ID)'
+
+    - task: TerraformCLI@0
+      displayName: Terraform Destroy
+      inputs:
+        command: 'destroy'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/orchestrate/rightSize'
+        environmentServiceName: 'INFRADEVTEST'
+        commandOptions: '-var subscriptionID=$(AZURE_SUBSCRIPTION_ID)'
